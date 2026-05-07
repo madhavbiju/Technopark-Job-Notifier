@@ -15,8 +15,8 @@ An automated Python tool that monitors the Technopark jobs API for new job posti
 ### 1. Clone & Setup Environment
 
 ```bash
-git clone https://github.com/yourusername/technopark-job-scraper.git
-cd technopark-job-scraper
+git clone https://github.com/madhavbiju/Technopark-Job-Notifier.git
+cd Technopark-Job-Notifier
 
 # Create and activate a virtual environment
 python3 -m venv venv
