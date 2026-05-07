@@ -1,5 +1,8 @@
 name: Technopark Job Scraper
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 on:
   schedule:
     # Run every day at 04:30 UTC (10:00 AM IST)
@@ -9,6 +12,9 @@ on:
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
+    concurrency:
+      group: technopark-job-scraper
+      cancel-in-progress: false
     
     # Grant permissions to push the updated database back to the repository
     permissions:
@@ -36,7 +42,15 @@ jobs:
         KEYWORDS: ${{ vars.KEYWORDS }} # Use a Repository Variable for easier editing without hiding it
       run: python run.py
 
+    - name: Track database state
+      if: always()
+      run: |
+        if [ -f jobs.db ]; then
+          git add -f jobs.db
+        fi
+
     - name: Commit and push updated database
+      if: always()
       uses: stefanzweifel/git-auto-commit-action@v5
       with:
         commit_message: "chore: update notified jobs database"

@@ -19,13 +19,7 @@ logger = logging.getLogger(__name__)
 
 def main():
     logger.info("Starting Technopark Job Search Script...")
-    
-    # Optional: validate config
-    try:
-        Config.validate()
-    except ValueError as e:
-        logger.warning(f"Config warning: {e}")
-        logger.warning("Continuing without notifications if tokens are missing.")
+    Config.validate()
 
     fetcher = JobFetcher()
     job_filter = JobFilter()
@@ -43,17 +37,22 @@ def main():
             # Check if it matches our keywords
             if job_filter.is_match(job):
                 new_matched_jobs.append(job)
-                # Mark it as notified so we don't process it again next run
-                storage.mark_notified(job.id)
 
         if new_matched_jobs:
             logger.info(f"Found {len(new_matched_jobs)} new matching jobs. Sending notifications...")
-            notifier.notify_jobs(new_matched_jobs)
+            notified_jobs = notifier.notify_jobs(new_matched_jobs)
+            for job in notified_jobs:
+                storage.mark_notified(job.id)
+
+            failed_count = len(new_matched_jobs) - len(notified_jobs)
+            if failed_count:
+                raise RuntimeError(f"Failed to notify {failed_count} matched job(s).")
         else:
             logger.info("No new matching jobs found today.")
 
     except Exception as e:
         logger.error(f"An unexpected error occurred during execution: {e}", exc_info=True)
+        raise
 
 if __name__ == "__main__":
     main()

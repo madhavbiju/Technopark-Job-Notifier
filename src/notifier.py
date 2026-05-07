@@ -1,5 +1,6 @@
 import requests
 import logging
+from html import escape
 from typing import List
 from .models import Job
 from .config import Config
@@ -32,23 +33,30 @@ class TelegramNotifier:
             logger.error(f"Failed to send Telegram message: {e}")
             return False
 
-    def notify_jobs(self, jobs: List[Job]):
+    def notify_jobs(self, jobs: List[Job]) -> List[Job]:
+        sent_jobs = []
+
         if not jobs:
-            return
+            return sent_jobs
 
         for job in jobs:
             message = self._format_job_message(job)
             success = self.send_message(message)
             if success:
+                sent_jobs.append(job)
                 logger.info(f"Successfully notified about job: {job.job_title} at {job.company.name}")
+            else:
+                logger.error(f"Notification failed for job: {job.job_title} at {job.company.name}")
+
+        return sent_jobs
 
     def _format_job_message(self, job: Job) -> str:
         job_url = f"https://technopark.in/job-details/{job.job_listing_id}"
         return (
             f"🚀 <b>New Job Match Found!</b>\n\n"
-            f"<b>Title:</b> {job.job_title}\n"
-            f"<b>Company:</b> {job.company.name}\n"
-            f"<b>Posted Date:</b> {job.posted_date}\n"
-            f"<b>Closing Date:</b> {job.closing_date or 'N/A'}\n\n"
-            f"<a href='{job_url}'>Apply Here</a>"
+            f"<b>Title:</b> {escape(job.job_title)}\n"
+            f"<b>Company:</b> {escape(job.company.name)}\n"
+            f"<b>Posted Date:</b> {escape(job.posted_date)}\n"
+            f"<b>Closing Date:</b> {escape(job.closing_date or 'N/A')}\n\n"
+            f'<a href="{escape(job_url, quote=True)}">Apply Here</a>'
         )

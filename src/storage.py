@@ -22,6 +22,7 @@ class Storage:
                 conn.commit()
         except sqlite3.Error as e:
             logger.error(f"Database initialization error: {e}")
+            raise
 
     def is_notified(self, job_id: int) -> bool:
         try:
@@ -31,7 +32,7 @@ class Storage:
                 return cursor.fetchone() is not None
         except sqlite3.Error as e:
             logger.error(f"Error checking if job is notified: {e}")
-            return False
+            raise
 
     def mark_notified(self, job_id: int):
         try:
@@ -41,3 +42,4 @@ class Storage:
                 conn.commit()
         except sqlite3.Error as e:
             logger.error(f"Error marking job as notified: {e}")
+            raise

@@ -1,6 +1,6 @@
 import requests
 import logging
-from typing import List, Generator
+from typing import Generator
 from .models import Job
 from .config import Config
 
@@ -25,7 +25,7 @@ class JobFetcher:
             return response.json()
         except requests.RequestException as e:
             logger.error(f"Error fetching page {page}: {e}")
-            return {}
+            raise
 
     def get_all_jobs(self) -> Generator[Job, None, None]:
         current_page = 1
@@ -35,7 +35,7 @@ class JobFetcher:
             data = self.fetch_page(current_page)
             
             if not data or 'data' not in data:
-                break
+                raise ValueError(f"Unexpected API response on page {current_page}.")
                 
             jobs_data = data['data']
             if not jobs_data:

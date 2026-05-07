@@ -6,7 +6,7 @@ An automated Python tool that monitors the Technopark jobs API for new job posti
 
 - **Keyword Filtering:** Only get notified about jobs that matter to you. Uses strict word-boundary regex matching to avoid false positives.
 - **Deduplication:** Uses a lightweight local SQLite database (`jobs.db`) to keep track of notified jobs.
-- **GitHub Actions Ready:** Designed to be run on a schedule in the cloud. It automatically commits the deduplication database back to the repo after each run to maintain state.
+- **GitHub Actions Ready:** Designed to be run on a schedule in the cloud. It commits the deduplication database back to the repo after successful notifications so scheduled runs maintain state.
 
 ---
 
@@ -55,7 +55,7 @@ Check your Telegram for new matches!
 
 You can deploy this script to run automatically every day using GitHub Actions.
 
-1. **Push your code** to a private or public GitHub Repository. (The `.gitignore` will ensure your `.env` and local `jobs.db` are kept safe).
+1. **Push your code** to a private or public GitHub Repository. (The `.gitignore` will ensure your `.env` and local logs stay out of git. The workflow force-adds `jobs.db` because it is the scheduled scraper's deduplication state).
 2. Go to your repository **Settings** -> **Secrets and variables** -> **Actions**.
 3. Under the **Secrets** tab, add:
    - `TELEGRAM_BOT_TOKEN`

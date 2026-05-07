@@ -10,7 +10,7 @@ class Config:
     
     # Comma-separated keywords, strip whitespace
     _keywords_raw: str = os.getenv("KEYWORDS", "")
-    KEYWORDS: List[str] = [k.strip().lower() for k in _keywords_raw.split(",")] if _keywords_raw else []
+    KEYWORDS: List[str] = [k.strip().lower() for k in _keywords_raw.split(",") if k.strip()] if _keywords_raw else []
     
     API_URL: str = os.getenv("API_URL", "https://technopark.in/api/paginated-jobs")
     MAX_PAGES: int = int(os.getenv("MAX_PAGES", "5"))
