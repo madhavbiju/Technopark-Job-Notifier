@@ -1,0 +1,25 @@
+# Environments
+.env
+venv/
+env/
+ENV/
+.venv/
+
+# Databases and State
+*.db
+*.db.bak
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Python Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# OS generated files
+.DS_Store
+Thumbs.db
